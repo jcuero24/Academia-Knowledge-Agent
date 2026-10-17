@@ -36,6 +36,10 @@ Express routes ──► answer service ──► retrieval service ──► kn
 
 Node.js 20 o posterior.
 
+## Despliegue en Vercel
+
+La aplicación Express se puede publicar como una demo sin credenciales. No configures claves LLM en un despliegue público hasta definir límites de gasto y protección contra abuso.
+
 ```bash
 npm install
 npm run dev

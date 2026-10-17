@@ -4,7 +4,7 @@ import { answerQuestion } from '../services/answer.service.js';
 import { listDocuments, retrieveDocuments } from '../services/retrieval.service.js';
 
 export const apiRouter = Router();
-apiRouter.get('/health', (_req, res) => res.json({ status: 'ok', mode: hasLlmConfig ? 'llm' : 'demo', knowledgeDocuments: listDocuments().length }));
+apiRouter.get('/health', (_req, res) => res.json({ status: 'ok', mode: hasLlmConfig ? 'llm' : 'demo', knowledgeDocuments: listDocuments().length, hostedDemo: process.env.VERCEL === '1' }));
 apiRouter.get('/documents', (_req, res) => res.json({ documents: listDocuments() }));
 apiRouter.post('/retrieve', (req, res) => {
   const question = typeof req.body?.question === 'string' ? req.body.question.trim() : '';
