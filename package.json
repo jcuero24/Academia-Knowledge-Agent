@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Grounded knowledge assistant with source citations and a human-readable retrieval trail.",
-  "scripts": { "dev": "tsx watch src/server.ts", "build": "tsc -p tsconfig.json", "start": "node dist/server.js" },
+  "scripts": { "dev": "tsx watch src/server.ts", "build": "tsc -p tsconfig.json", "start": "node dist/server.js", "eval:retrieval": "tsx scripts/evaluate-retrieval.ts" },
   "engines": { "node": ">=20" },
   "dependencies": { "dotenv": "^16.5.0", "express": "^5.1.0" },
   "devDependencies": { "@types/express": "^5.0.3", "@types/node": "^22.15.30", "tsx": "^4.20.3", "typescript": "^5.8.3" }

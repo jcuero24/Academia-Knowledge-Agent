@@ -1,41 +1,95 @@
 # Academia Knowledge Agent
 
-Asistente web de preguntas y respuestas que recupera fragmentos de una base de conocimiento, muestra las fuentes y se abstiene cuando no hay evidencia suficiente. Incluye interfaz en español, API REST, modo determinista sin credenciales y conexión opcional a una API compatible con OpenAI Chat Completions.
+Asistente web de conocimiento que recupera fuentes de una base documental pequeña, muestra evidencia junto a la respuesta y se abstiene cuando la recuperación no supera el umbral configurado. Está pensado como proyecto de portafolio Full Stack e IA aplicada.
 
-> **Estado:** prototipo de portafolio. Los documentos incluidos son ficticios y el recuperador usa coincidencia léxica; no es una plataforma de producción ni una base vectorial.
+> **Estado honesto:** prototipo funcional para demostración local. La búsqueda es léxica tipo BM25 simplificada; no usa embeddings, una base vectorial ni re-ranking semántico. Los documentos son ficticios. El modo LLM es opcional.
 
-## Ejecutar localmente
+## Qué puedes explorar
 
-Requiere Node.js 20 o posterior.
+- Experiencia de chat en español con preguntas sugeridas, conversación efímera y control para borrarla.
+- API REST para estado, inventario documental, inspección de recuperación y respuestas.
+- Recuperación con normalización de acentos, eliminación de palabras vacías, ponderación de título/categoría y límite de tres fuentes.
+- Modo demo sin claves y generación opcional con una API compatible con OpenAI Chat Completions.
+- Abstención en preguntas sin evidencia suficiente; vista de fragmentos recuperados y puntaje léxico por fuente.
+- Conjunto pequeño de evaluación de recuperación con Hit@1 y Hit@3.
+- Imagen Docker de dos etapas para compilar y ejecutar la aplicación.
+
+## Arquitectura
+
+```text
+Browser (HTML/CSS/JS)
+       │ REST /api
+       ▼
+Express routes ──► answer service ──► retrieval service ──► knowledge base
+                          │
+                          └──────────► LLM provider (optional)
+```
+
+- `src/routes`: contratos HTTP y validación de entrada.
+- `src/services`: recuperación y composición de respuesta.
+- `src/data`: documentos de demostración.
+- `src/middleware`: manejo centralizado de errores.
+- `public`: interfaz accesible y estática.
+- `scripts/evaluate-retrieval.ts`: medición reproducible sobre preguntas de ejemplo.
+
+## Requisitos y ejecución local
+
+Node.js 20 o posterior.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Abre http://localhost:3000. Para compilar y ejecutar la versión compilada:
+Abre http://localhost:3000. Para compilar y servir:
 
 ```bash
 npm run build
 npm start
 ```
 
-El modo demo funciona sin claves: hace recuperación simple y presenta el fragmento recuperado. Para activar generación, copia `.env.example` a `.env` y configura `LLM_BASE_URL`, `LLM_API_KEY` y `LLM_MODEL` para un proveedor compatible. No publiques credenciales ni envíes datos personales.
+La demo funciona sin credenciales. Para generación con un proveedor compatible, copia `.env.example` a `.env` y define:
+
+```env
+LLM_BASE_URL=https://api.example.com/v1
+LLM_API_KEY=...
+LLM_MODEL=...
+```
+
+No incluyas `.env` o claves en GitHub. El servicio envía al proveedor externo la pregunta y hasta tres documentos recuperados; usa contenido público o autorizado.
 
 ## API
 
-- `GET /api/health`: estado y modo activo.
-- `GET /api/documents`: lista de documentos públicos de ejemplo.
-- `POST /api/chat` con `{"question":"¿Cómo consulto horarios?"}`: respuesta, fuentes, modo y puntaje léxico.
+| Método | Ruta | Propósito |
+|---|---|---|
+| `GET` | `/api/health` | Estado, modo activo y cantidad de documentos |
+| `GET` | `/api/documents` | Metadatos de los documentos disponibles |
+| `POST` | `/api/retrieve` | Devuelve fragmentos y puntajes sin llamar al LLM |
+| `POST` | `/api/chat` | Respuesta, modo, puntaje de recuperación y fuentes |
 
-## Diseño y límites
+Ejemplo:
 
-- Recuperación léxica simple con normalización de acentos; la puntuación indica coincidencias, no relevancia semántica.
-- El endpoint de generación recibe únicamente documentos recuperados y una instrucción para responder con evidencia.
-- Hay abstención si la coincidencia es insuficiente. Aun así, los modelos pueden equivocarse; verificar políticas con una persona.
-- No hay autenticación, carga de archivos, historial persistente, evaluación automática, rate limiting ni almacenamiento vectorial.
-- El conjunto documental es ilustrativo. Reemplázalo solo por información autorizada y vigente.
+```json
+{ "question": "¿Hay clases virtuales?" }
+```
 
-## Extensiones de portafolio
+## Medir la recuperación
 
-Agrega evaluación sobre preguntas/respuestas esperadas, ingestión de documentos con permisos, búsqueda semántica comparada contra la búsqueda léxica, telemetría que oculte datos sensibles y despliegue con controles de acceso. Registra métricas observadas y metodología antes de reportar resultados.
+```bash
+npm run eval:retrieval
+```
+
+El script informa Hit@1 y Hit@3 sobre seis ejemplos creados para esta base. El conjunto es pequeño y construido a mano; sus resultados no representan precisión en producción ni calidad de respuestas generativas.
+
+## Docker
+
+```bash
+docker build -t academia-knowledge-agent .
+docker run --rm -p 3000:3000 academia-knowledge-agent
+```
+
+Para usar un proveedor, pasa las variables al contenedor con un gestor de secretos; no las escribas en la imagen.
+
+## Límites y próximos pasos
+
+No incluye carga documental, extracción PDF, autenticación, autorización, historial persistente, telemetría, limitación de llamadas, base vectorial ni evaluación automática de fidelidad. El umbral y puntajes léxicos no equivalen a confianza calibrada. El prompt reduce instrucciones hostiles, pero no constituye una garantía contra prompt injection. Antes de una publicación real: usar documentos autorizados, construir pruebas de recuperación/respuesta, definir retención y privacidad, controlar el uso del proveedor y agregar controles de seguridad.

@@ -1,0 +1,12 @@
+import type { KnowledgeDocument } from '../types.js';
+
+// Reemplaza este conjunto ilustrativo solo con contenido autorizado y vigente.
+export const knowledgeBase: KnowledgeDocument[] = [
+  { id: 'enrollment', title: 'Proceso de matrícula', category: 'Admisiones', updatedAt: '2026-01-15', text: 'Para iniciar la matrícula, completa el formulario de inscripción y espera la confirmación del equipo académico. La academia contacta al estudiante por correo electrónico para confirmar el nivel y el horario. No se confirma un cupo hasta recibir respuesta de la academia.' },
+  { id: 'schedules', title: 'Horarios y modalidades', category: 'Clases', updatedAt: '2026-01-15', text: 'Los horarios disponibles dependen del grupo y del nivel. Las clases pueden ser presenciales o virtuales según la oferta vigente. Escribe al equipo académico para consultar disponibilidad antes de inscribirte.' },
+  { id: 'placement', title: 'Prueba de nivel', category: 'Evaluación', updatedAt: '2026-01-15', text: 'El equipo académico puede recomendar una prueba de nivel antes de asignar un grupo. La prueba orienta al estudiante hacia el curso adecuado; la academia confirma el resultado y el grupo por correo.' },
+  { id: 'contact', title: 'Contacto y solicitudes', category: 'Atención', updatedAt: '2026-01-15', text: 'Para solicitar información, deja tu nombre, correo y el motivo de consulta en el formulario de contacto. El formulario prepara un mensaje para el equipo de la academia; un integrante responde personalmente.' },
+  { id: 'payments', title: 'Pagos y facturación', category: 'Administración', updatedAt: '2026-01-15', text: 'Consulta con el equipo administrativo los medios de pago, fechas y condiciones vigentes. La base de conocimiento de esta demo no incluye tarifas ni datos bancarios; no envíes información financiera por el chat.' },
+  { id: 'certificates', title: 'Certificados de estudio', category: 'Administración', updatedAt: '2026-01-15', text: 'Las solicitudes de certificados se gestionan con el equipo administrativo. Indica tu nombre, curso y periodo de estudio por el canal oficial. El plazo de expedición debe confirmarlo la academia.' },
+  { id: 'privacy', title: 'Privacidad y tratamiento de datos', category: 'Privacidad', updatedAt: '2026-01-15', text: 'Esta demostración no guarda el historial del chat en el servidor. No ingreses información personal, financiera o sensible. En un servicio real, consulta el aviso de privacidad de la institución antes de compartir datos.' }
+];
